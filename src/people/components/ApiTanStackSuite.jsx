@@ -1,25 +1,31 @@
+// Mettre en structure de dossiers people/components + service, éventuellement hooks et state
+// Faire fichier de config à la source
+// Faire service
+
 import { useQuery } from "@tanstack/react-query";
+import PeopleService from "../services/PeopleService";
 
-const ApiTanStack = () => {
-  const getPeople = async () => {
-    const url = "https://swapi.dev/api/people";
+// Instancie la class
+const peopleService = new PeopleService();
 
-    const response = await fetch(url);
-
-    if (!response.ok) throw new Error();
-
-    const people = await response.json();
-
-    console.log("ApiTanStack", people);
-
-    return people.results;
-  };
+const ApiTanStackSuite = () => {
+  console.log(peopleService);
 
   // hooks useQuery, retourne un objet qui contient
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ["people"], // pour cache validation
-    queryFn: getPeople, // passer la fonction pour qu'elle soit executer
+    queryFn: peopleService.getAllPeople, // passer la fonction pour qu'elle soit executer
+
+    // Le prof a du faire ça pour que ça fonctionne
+    // queryFn: peopleService.getAllPeople.bind(peopleService),
+    // ou
+    // queryFn: () => peopleService.getAllPeople()
+
+    // Pour passer un argument
+    // queryFn: () => peopleService.getAllPeople(1)
   });
+
+  console.log(data);
 
   if (isLoading) return <div>Loading en cours...</div>;
   if (isError) return <div>Error: {error.message}</div>;
@@ -43,4 +49,4 @@ const ApiTanStack = () => {
   );
 };
 
-export default ApiTanStack;
+export default ApiTanStackSuite;
